@@ -42,5 +42,36 @@ const PREMIUM = true;
         const cities = byItem[item];
         for (const buy of cities) {
           const buyPrice = buy.sell_price_min;
-          for (const sell of cities)
+          for (const sell of cities) {
+            if (buy.city === sell.city) continue;
+            const sellPrice = sell.buy_price_max;
+            const buyFee = buyPrice * 0.025;
+            const sellFee = sellPrice * 0.025;
+            const taxRate = PREMIUM ? 0.04 : 0.08;
+            const salesTax = sellPrice * taxRate;
+            const netProfit = sellPrice - sellFee - salesTax - (buyPrice + buyFee);
+            if (netProfit > 0) {
+              deals.push({
+                item: item,
+                buyCity: buy.city,
+                buyPrice: buyPrice,
+                sellCity: sell.city,
+                sellPrice: sellPrice,
+                profit: Math.round(netProfit)
+              });
+            }
+          }
+        }
+      }
+    } catch (err) {
+      console.error(`Ошибка при обработке батча: ${err.message}`);
+    }
 
+    await new Promise(r => setTimeout(r, 200));
+  }
+
+  deals.sort((a, b) => b.profit - a.profit);
+  console.log(`Найдено ${deals.length} сделок.`);
+  fs.writeFileSync('deals.json', JSON.stringify(deals, null, 2));
+  console.log('deals.json записан.');
+})();
