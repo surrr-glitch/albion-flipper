@@ -4,20 +4,21 @@ const fs = require('fs');
 const LOCATIONS = ["Caerleon","Bridgewatch","Lymhurst","Martlock","Fort Sterling","Thetford"];
 const QUALITY = 2; // 2 = Normal (обычное качество)
 const PREMIUM = true; // true – налог 4%, false – 8%
-const MIN_TIER = 5; // собираем предметы от T5 и выше
-const MAX_ITEMS = 300; // сколько предметов обработать максимум
 // ===============================================
 
 (async () => {
-  console.log("Загружаем список предметов...");
-  const itemsRes = await fetch("https://www.albion-online-data.com/api/v2/stats/items");
-  const allItems = await itemsRes.json();
-
-  // Фильтруем только T5, T6, T7, T8 и т.д.
-  let highTier = allItems.filter(id => /^T([5-9]|1[0-9])_/.test(id));
-  // Убираем мебель, еду, маунтов, зелья – они редко выгодны
-  highTier = highTier.filter(id => !id.includes('_FURNITURE') && !id.includes('_MOUNT_') && !id.includes('_MEAL_') && !id.includes('_POTION_'));
-  if (highTier.length > MAX_ITEMS) highTier = highTier.slice(0, MAX_ITEMS);
+  console.log("Используем встроенный список предметов (API временно недоступен)...");
+  // Временный список популярных предметов T5–T8
+  const highTier = [
+    "T5_HEAD_PLATE_SET1", "T5_ARMOR_PLATE_SET1", "T5_SHOES_PLATE_SET1",
+    "T5_2H_SWORD", "T5_2H_AXE", "T5_BAG",
+    "T6_HEAD_PLATE_SET1", "T6_ARMOR_PLATE_SET1", "T6_SHOES_PLATE_SET1",
+    "T6_2H_SWORD", "T6_2H_AXE", "T6_BAG",
+    "T7_HEAD_PLATE_SET1", "T7_ARMOR_PLATE_SET1", "T7_SHOES_PLATE_SET1",
+    "T7_2H_SWORD", "T7_2H_AXE", "T7_BAG",
+    "T8_HEAD_PLATE_SET1", "T8_ARMOR_PLATE_SET1", "T8_SHOES_PLATE_SET1",
+    "T8_2H_SWORD", "T8_2H_AXE", "T8_BAG"
+  ];
 
   console.log(`Будет проверено ${highTier.length} предметов.`);
 
