@@ -1,0 +1,61 @@
+
+БУЛАТ Су <sultangalievbulat93@gmail.com>
+07:41 (0 минут назад)
+кому: мне
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Albion Flipper – Все предметы</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1000px; margin: 20px auto; padding: 0 15px; background: #1a1a1a; color: #ddd; }
+        h1 { color: #f0b90b; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { background: #333; color: #f0b90b; padding: 10px; text-align: left; }
+        td { padding: 8px; border-bottom: 1px solid #444; }
+        tr:nth-child(even) { background: #2a2a2a; }
+        .profit { color: #4caf50; font-weight: bold; }
+        .city { color: #81c784; }
+        .price { color: #ffd54f; }
+        .footer { margin-top: 20px; font-size: 0.8em; color: #888; }
+    </style>
+</head>
+<body>
+    <h1>📊 Albion Market Flipper</h1>
+    <p>Лучшие маршруты для перепродажи (с учётом комиссий 2.5% + налог 4%). Предметы от Т5+</p>
+    <div id="deals-container">
+        <p>Загрузка данных...</p>
+    </div>
+    <div class="footer">Обновлено: <span id="last-update">никогда</span>. Данные собираются игроками через albiondata-client.</div>
+
+    <script>
+        fetch('deals.json')
+            .then(response => response.json())
+            .then(deals => {
+                if (deals.length === 0) {
+                    document.getElementById('deals-container').innerHTML = '<p>Пока нет выгодных сделок. Запусти albiondata-client и проверь позже.</p>';
+                    return;
+                }
+                let html = `<table><tr><th>Предмет</th><th>Где купить</th><th>Цена покупки</th><th>Куда везти</th><th>Цена продажи</th><th>Чистая прибыль</th></tr>`;
+                deals.forEach(d => {
+                    html += `<tr>
+                        <td><b>${d.item}</b></td>
+                        <td class="city">${d.buyCity}</td>
+                        <td class="price">${d.buyPrice.toLocaleString()} ⚪</td>
+                        <td class="city">${d.sellCity}</td>
+                        <td class="price">${d.sellPrice.toLocaleString()} ⚪</td>
+                        <td class="profit">${d.profit.toLocaleString()} ⚪</td>
+                    </tr>`;
+                });
+                html += '</table>';
+                document.getElementById('deals-container').innerHTML = html;
+            })
+            .catch(() => {
+                document.getElementById('deals-container').innerHTML = '<p>Ошибка загрузки данных.</p>';
+            });
+        document.getElementById('last-update').textContent = new Date().toLocaleString('ru-RU');
+    </script>
+</body>
+</html>
